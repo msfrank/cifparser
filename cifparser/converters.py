@@ -42,19 +42,19 @@ def str_to_timedelta(s):
             raise Exception("{0} did not match regex".format(s))
         value = int(m.group(1))
         units = m.group(2).lower().strip()
-        if units in ('micro', 'micros', 'microsecond', 'microseconds'):
+        if units in ('us', 'micro', 'micros', 'microsecond', 'microseconds'):
             return datetime.timedelta(microseconds=value)
-        if units in ('milli', 'millis', 'millisecond', 'milliseconds'):
+        if units in ('ms', 'milli', 'millis', 'millisecond', 'milliseconds'):
             return datetime.timedelta(milliseconds=value)
-        if units in ('second', 'seconds'):
+        if units in ('s', 'second', 'seconds'):
             return datetime.timedelta(seconds=value)
-        if units in ('minute', 'minutes'):
+        if units in ('m', 'minute', 'minutes'):
             return datetime.timedelta(minutes=value)
-        if units in ('hour', 'hours'):
+        if units in ('h', 'hour', 'hours'):
             return datetime.timedelta(hours=value)
-        if units in ('day', 'days'):
+        if units in ('d', 'day', 'days'):
             return datetime.timedelta(days=value)
-        if units in ('week', 'weeks'):
+        if units in ('w', 'week', 'weeks'):
             return datetime.timedelta(weeks=value)
     except Exception as e:
         raise ConversionError("failed to convert {0} to timedelta".format(s))

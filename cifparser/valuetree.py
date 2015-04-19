@@ -16,8 +16,7 @@ class ValueTree(object):
         Creates a container at the specified path, creating any necessary
         intermediate containers.
 
-        :param path:
-        :type path:
+        :param path: str or Path instance
         :raises ValueError: A component of path is a field name.
         """
         path = make_path(path)
@@ -36,8 +35,7 @@ class ValueTree(object):
         """
         Removes the container at the specified path.
 
-        :param path:
-        :type path:
+        :param path: str or Path instance
         :raises ValueError: A component of path is a field name.
         :raises KeyError: A component of path doesn't exist.
         """
@@ -58,8 +56,9 @@ class ValueTree(object):
         """
         Retrieves the container at the specified path.
 
-        :param path:
-        :type path:
+        :param path: str or Path instance
+        :return:
+        :rtype: ValueTree
         :raises ValueError: A component of path is a field name.
         :raises KeyError: A component of path doesn't exist.
         """
@@ -76,10 +75,9 @@ class ValueTree(object):
 
     def get_container_containers(self, path):
         """
-        :param path:
-        :type path: Path
+        :param path: str or Path instance
         :return:
-        :rtype: dict
+        :rtype: dict[str,ValueTree]
         :raises ValueError: A component of path is a field name.
         :raises KeyError: A component of path doesn't exist.
         """
@@ -93,10 +91,9 @@ class ValueTree(object):
     def get_container_fields(self, path):
         """
 
-        :param path:
-        :type path: Path
+        :param path: str or Path instance
         :return:
-        :rtype: dict
+        :rtype: dict[str,str]
         :raises ValueError: A component of path is a field name.
         :raises KeyError: A component of path doesn't exist.
         """
@@ -112,8 +109,9 @@ class ValueTree(object):
         Returns True if a container exists at the specified path,
         otherwise False.
 
-        :param path:
-        :type path:
+        :param path: str or Path instance
+        :return:
+        :rtype: bool
         :raises ValueError: A component of path is a field name.
         """
         path = make_path(path)
@@ -126,10 +124,10 @@ class ValueTree(object):
     def put(self, path, name, value_or_values):
         """
 
-        :param path:
+        :param path: str or Path instance
         :param name:
+        :type name: str
         :param value_or_values:
-        :return:
         """
         if isinstance(value_or_values, str):
             self.put_field(path, name, value_or_values)
@@ -142,6 +140,12 @@ class ValueTree(object):
         """
         Creates a field with the specified name an value at path.  If the
         field already exists, it will be overwritten with the new value.
+
+        :param path: str or Path instance
+        :param name:
+        :type name: str
+        :param value:
+        :type value: str
         """
         if not isinstance(value, str):
             raise ValueError()
@@ -155,10 +159,11 @@ class ValueTree(object):
     def put_field_list(self, path, name, values):
         """
 
-        :param path:
+        :param path: str or Path instance
         :param name:
+        :type name: str
         :param values:
-        :return:
+        :type values: list[str]
         """
         if not isinstance(values, list):
             raise ValueError()
@@ -172,6 +177,12 @@ class ValueTree(object):
     def append_field(self, path, name, value):
         """
         Appends the field to the container at the specified path.
+
+        :param path: str or Path instance
+        :param name:
+        :type name: str
+        :param value:
+        :type value: str
         """
         path = make_path(path)
         container = self.get_container(path)
@@ -187,6 +198,9 @@ class ValueTree(object):
 
     def remove_field(self, path, name):
         """
+        :param path: str or Path instance
+        :param name:
+        :type name: str
         """
         path = make_path(path)
         container = self.get_container(path)
@@ -200,8 +214,9 @@ class ValueTree(object):
 
     def get(self, path, name):
         """
-        :param path:
+        :param path: str or Path instance
         :param name:
+        :type name: str
         :return:
         """
         container = self.get_container(path)
@@ -214,10 +229,10 @@ class ValueTree(object):
         """
         Retrieves the value of the field at the specified path.
 
-        :param path:
-        :type path:
+        :param path: str or Path instance
         :param name:
         :type name: str
+        :return:
         :raises ValueError: A component of path is a field name.
         :raises KeyError: A component of path doesn't exist.
         :raises TypeError: The field name is a component of a path.
@@ -233,8 +248,10 @@ class ValueTree(object):
     def get_field_list(self, path, name):
         """
 
-        :param path:
+        :param path: str or Path instance
         :param name:
+        :type name: str
+        :return:
         :raises ValueError: A component of path is a field name.
         :raises KeyError: A component of path doesn't exist.
         :raises TypeError: The field name is a component of a path.
@@ -251,10 +268,10 @@ class ValueTree(object):
         """
         Returns True if a field exists at the specified path, otherwise False.
 
-        :param path:
-        :type path:
+        :param path: str or Path instance
         :param name:
         :type name: str
+        :return:
         :raises ValueError: A component of path is a field name.
         :raises TypeError: The field name is a component of a path.
         """
@@ -268,10 +285,10 @@ class ValueTree(object):
         """
         Returns True if a multi-valued field exists at the specified path, otherwise False.
 
-        :param path:
-        :type path:
+        :param path: str or Path instance
         :param name:
         :type name: str
+        :return:
         :raises ValueError: A component of path is a field name.
         :raises TypeError: The field name is a component of a path.
         """
@@ -283,8 +300,10 @@ class ValueTree(object):
 
     def contains(self, path, name):
         """
-        :param path:
+
+        :param path: str or Path instance
         :param name:
+        :type name: str
         :return:
         """
         try:
@@ -296,6 +315,8 @@ class ValueTree(object):
     def iter_fields(self):
         """
         Iterate all fields as a sequence of (path,name,value) tuples.
+
+        :return:
         """
         def generator(path, values):
             for name,value in sorted(values.items()):
@@ -346,8 +367,8 @@ def load(obj):
     values = ValueTree()
     def _load(_obj, container):
         for name,value in _obj.items():
-            path = make_path(name)
             if isinstance(value, dict):
+                path = make_path(name)
                 container.put_container(path)
                 _load(value, container.get_container(path))
             elif isinstance(value, list):

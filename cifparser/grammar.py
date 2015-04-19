@@ -16,7 +16,8 @@ ListContinuation = collections.namedtuple('ListContinuation', ['list_continuatio
 
 comment_parser = pp.Literal('#') + pp.restOfLine
 objectdef_parser = path_parser + pp.Literal(':')
-fieldkey_parser = pp.Word(pp.alphanums) ^ pp.quotedString
+fieldkey_parser = pp.Regex(r'[^=]+')
+fieldkey_parser.setParseAction(lambda tokens: tokens[0].strip())
 fielddef_parser = fieldkey_parser + pp.Literal('=') + pp.restOfLine
 valuecontinuation_parser = pp.Literal('|') + pp.restOfLine
 listcontinuation_parser = pp.Literal(',') + pp.restOfLine

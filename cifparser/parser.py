@@ -210,7 +210,6 @@ class ParserContext(object):
         path = frame.path + path
         frame = ContainerFrame(linenum, indent, path, container)
         self.push_frame(frame)
-        print("created container for path {0}".format(path))
 
     def append_sibling_object(self, linenum, indent, path):
         """
@@ -261,7 +260,6 @@ class ParserContext(object):
         frame.container.put_field(ROOT_PATH, field_name, field_value)
         frame = FieldFrame(linenum, indent, frame.path, frame.container, field_name, field_value)
         self.push_frame(frame)
-        print("created field {0} in container at path {1}".format(field_name, frame.path))
 
     def append_sibling_field(self, linenum, indent, field_name, field_value):
         """

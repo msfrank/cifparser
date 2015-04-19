@@ -3,8 +3,10 @@
 # This file is part of cifparser.  cifparser is BSD-licensed software;
 # for copyright information see the LICENSE file.
 
+import functools
 import pyparsing as pp
 
+@functools.total_ordering
 class Path(object):
     """
     """
@@ -19,6 +21,9 @@ class Path(object):
 
     def __eq__(self, other):
         return self.segments == other.segments
+
+    def __lt__(self, other):
+        return self.segments < other.segments
 
     def __hash__(self):
         return hash(str(self))

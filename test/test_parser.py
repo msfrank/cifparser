@@ -35,6 +35,14 @@ toplevel:
 field3 = value3
 """
 
+    field_key_with_spaces_data = \
+"""
+toplevel:
+    nospaces = foo
+    with single spaces = bar
+    with   extra space = baz
+"""
+
     value_continuation_data = \
 """
 toplevel:
@@ -68,6 +76,14 @@ field3 = value3
         self.assertEquals(values.get_field(make_path('object1.object4'), 'field7'), ' value7')
         self.assertEquals(values.get_field(ROOT_PATH, 'field8'), ' value8')
         self.assertEquals(values.get_field(make_path('object5'), 'field9'), ' value9')
+
+    def test_load_field_keys_with_spaces(self):
+        "a CIF parser should parse a multi-line document with keys that have embedded space"
+        cifparser.parser.print_ast(io.StringIO(self.field_key_with_spaces_data))
+        values = cifparser.parser.parse_file(io.StringIO(self.field_key_with_spaces_data))
+        self.assertEquals(values.get_field(make_path('toplevel'), 'nospaces'), ' foo')
+        self.assertEquals(values.get_field(make_path('toplevel'), 'with single spaces'), ' bar')
+        self.assertEquals(values.get_field(make_path('toplevel'), 'with   extra space'), ' baz')
 
     def test_load_deep_path(self):
         "a CIF parser should parse a multi-line document with deep paths"
