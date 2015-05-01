@@ -62,11 +62,13 @@ def str_to_timedelta(s):
 def str_to_size(s):
     s = s.strip()
     try:
-        m = re.match(r'([1-9]\d*)\s*(.*)', s)
+        m = re.match(r'(0|[1-9]\d*)\s*(.*)', s)
         if m is None:
             raise Exception("{0} did not match regex".format(s))
         value = int(m.group(1))
         units = m.group(2).lower().strip()
+        if units in ('b', 'byte', 'bytes'):
+            return value
         if units in ('kb', 'kilo', 'kilobyte', 'kilobytes'):
             return value * 1024
         if units in ('mb', 'mega', 'megabyte', 'megabytes'):
