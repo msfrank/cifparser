@@ -140,6 +140,18 @@ class Namespace(object):
     def get_percentage_list_or_default(self, path, name, default=None):
         return or_default(default, self.get_percentage_list, path, name)
 
+    def get_throughput(self, path, name):
+        return str_to_throughput(self.get_flattened(path, name))
+
+    def get_throughput_or_default(self, path, name, default=None):
+        return or_default(default, self.get_throughput, path, name)
+
+    def get_throughput_list(self, path, name):
+        return map(lambda x: str_to_throughput(x), self.get_flattened_list(path, name))
+
+    def get_throughput_list_or_default(self, path, name, default=None):
+        return or_default(default, self.get_throughput_list, path, name)
+
     def contains_field(self, path, name):
         """
         Returns True if the specified name exists, otherwise False.

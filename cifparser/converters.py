@@ -91,3 +91,26 @@ def str_to_percentage(s):
         return float(m.group(1)) / 100.0
     except Exception as e:
         raise ConversionError("failed to convert {0} to percentage".format(s))
+
+def str_to_throughput(s):
+    s = s.strip()
+    try:
+        m = re.match(r'(0?\.\d+|[1-9]\d*\.\d+|\d+)\s*(.*)', s)
+        if m is None:
+            raise Exception("{0} did not match regex".format(s))
+        value = float(m.group(1))
+        units = m.group(2).strip()
+        if units in ('bps', 'Bps', 'bytes/s', 'bytes/sec', 'bytes/second'):
+            return value
+        if units in ('Kbps', 'kilobytes/s', 'kilobytes/sec', 'kilobytes/second'):
+            return value * 1024.0
+        if units in ('Mbps', 'megabytes/s', 'megabytes/sec', 'megabytes/second'):
+            return value * 1024.0 * 1024.0
+        if units in ('Gbps', 'gigabytes/s', 'gigabytes/sec', 'gigabytes/second'):
+            return value * 1024.0 * 1024.0 * 1024.0
+        if units in ('Tbps', 'terabytes/s', 'terabytes/sec', 'terabytes/second'):
+            return value * 1024.0 * 1024.0 * 1024.0 * 1024.0
+        if units in ('Pbps', 'petabytes/s', 'petabytes/sec', 'petabytes/second'):
+            return value * 1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0
+    except Exception as e:
+        raise ConversionError("failed to convert {0} to size in bytes".format(s))
