@@ -44,6 +44,17 @@ class ContainerFrame(Frame):
     def __str__(self):
         return "ContainerFrame(linenum={0}, indent={1}, path={2})".format(self.linenum,self.indent,self.path)
 
+class ListItemFrame(ContainerFrame):
+    """
+    A Frame which represents a list item in a container.
+    """
+    def __init__(self, linenum, indent, path, container):
+        """
+        """
+        super().__init__(linenum, indent, path, container)
+    def __str__(self):
+        return "ListItemFrame(linenum={0}, indent={1}, path={2})".format(self.linenum,self.indent,self.path)
+
 class RootFrame(ContainerFrame):
     """
     A Frame which represents the root of the parsing stack.
@@ -374,6 +385,10 @@ def parse_file(f):
             # object is a parent of the current object
             else:
                 parser.append_parent_object(linenum, indent, value.path)
+
+        # add a list item under the current container
+        if isinstance(value, ListItemDef):
+            pass
 
         # add a new field
         if isinstance(value, FieldDef):

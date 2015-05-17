@@ -7,15 +7,18 @@ import collections
 import pyparsing as pp
 
 from cifparser.path import path_parser
+from cifparser.errors import ParserError
 
 Comment = collections.namedtuple('Comment',['value'])
 ObjectDef = collections.namedtuple('ObjectDef', ['path'])
+ListItemDef = collections.namedtuple('ListItemDef', ['path'])
 FieldDef = collections.namedtuple('FieldDef', ['field_name','field_value'])
 ValueContinuation = collections.namedtuple('ValueContinuation', ['value_continuation'])
 ListContinuation = collections.namedtuple('ListContinuation', ['list_continuation'])
 
 comment_parser = pp.Literal('#') + pp.restOfLine
 objectdef_parser = path_parser + pp.Literal(':')
+listitemdef_parser = pp.Literal('-') + path_parser + pp.Literal(':')
 fieldkey_parser = pp.Regex(r'[^=]+')
 fieldkey_parser.setParseAction(lambda tokens: tokens[0].strip())
 fielddef_parser = fieldkey_parser + pp.Literal('=') + pp.restOfLine
@@ -30,6 +33,10 @@ def objectdef_parse_action(tokens):
     return ObjectDef(tokens[0])
 objectdef_parser.setParseAction(objectdef_parse_action)
 
+def listitemdef_parse_action(tokens):
+    return ListItemDef(tokens[1])
+listitemdef_parser.setParseAction(listitemdef_parse_action)
+
 def fielddef_parse_action(tokens):
     return FieldDef(tokens[0], tokens[2])
 fielddef_parser.setParseAction(fielddef_parse_action)
@@ -42,7 +49,7 @@ def listcontinuation_parse_action(tokens):
     return ListContinuation(tokens[1])
 listcontinuation_parser.setParseAction(listcontinuation_parse_action)
 
-line_parser = comment_parser ^ objectdef_parser ^ fielddef_parser ^ valuecontinuation_parser ^ listcontinuation_parser
+line_parser = comment_parser ^ objectdef_parser ^ listitemdef_parser ^ fielddef_parser ^ valuecontinuation_parser ^ listcontinuation_parser
 
 def line_parse_action(tokens):
     return None if len(tokens) == 0 else tokens[0]
@@ -80,10 +87,13 @@ def iter_lines(f):
     :return:
     """
     linenum = 1
-    for text in f.readlines():
-        # ignore lines that consist entirely of whitespace
-        if text.isspace():
-            continue
-        indent,value = parse_line(text)
-        yield linenum,indent,value
-        linenum += 1
+    try:
+        for text in f.readlines():
+            # ignore lines that consist entirely of whitespace
+            if text.isspace():
+                continue
+            indent,value = parse_line(text)
+            yield linenum,indent,value
+            linenum += 1
+    except:
+        raise ParserError(linenum, 0, '', 'failed to parse line')

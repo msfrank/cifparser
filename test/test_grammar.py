@@ -30,6 +30,22 @@ class TestCIFGrammar(unittest.TestCase):
         other_fields = vars(cifparser.grammar.ObjectDef(make_path('deep','nested','object')))
         self.assertDictEqual(result_fields, other_fields)
 
+    def test_parse_listitemdef_line(self):
+        "a CIF lexer should tokenise '-' + <PathSegment> + ':' as a simple list item definition"
+        indent,result = cifparser.grammar.parse_line("- object:")
+        self.assertIsInstance(result, cifparser.grammar.ListItemDef)
+        result_fields = vars(result)
+        other_fields = vars(cifparser.grammar.ListItemDef(make_path('object')))
+        self.assertDictEqual(result_fields, other_fields)
+
+    def test_parse_deep_listitemdef_line(self):
+        "a CIF lexer should tokenise '-' + *(<PathSegment> + '.') + <PathSegment> + ':' as a deep list item definition"
+        indent,result = cifparser.grammar.parse_line("- deep.nested.object:")
+        self.assertIsInstance(result, cifparser.grammar.ListItemDef)
+        result_fields = vars(result)
+        other_fields = vars(cifparser.grammar.ListItemDef(make_path('deep','nested','object')))
+        self.assertDictEqual(result_fields, other_fields)
+
     def test_parse_fielddef_line(self):
         "a CIF lexer should tokenise <FieldDef> + '=' + <RestOfLine> as a field definition"
         indent,result = cifparser.grammar.parse_line("foo = bar")
